@@ -1,0 +1,73 @@
+esphome:
+  name: flaschengeist
+  platform: ESP8266
+  board: d1_mini
+  name_add_mac_suffix: false
+
+wifi:
+  ssid: !secret wifi_name
+  password: !secret wifi_pass
+  manual_ip:
+    # Set this to the IP of the ESP
+    static_ip: 10.8.1.123
+    # Set this to the IP address of the router. Often ends with .1
+    gateway: 10.8.1.1
+    # The subnet of the network. 255.255.255.0 works for most home networks.
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Flaschengeist Fallback Hotspot"
+    password: "pUTa1zgExxex"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+status_led:
+  pin:
+    number: D4
+    inverted: True
+
+binary_sensor:
+  - platform: status
+    name: "Flaschengeist Status"
+
+sensor:
+  - platform: adc
+    filters:
+      - multiply: 1
+    pin: A0
+    name: "Brightness"
+    icon: "mdi:theme-light-dark"
+    state_class: "measurement"
+    unit_of_measurement: "V"
+    entity_category: "diagnostic"
+    update_interval: 10s
+    accuracy_decimals: 1
+    raw: true
+
+light:
+  - platform: neopixelbus
+    gamma_correct: 1.0
+    pin: GPIO3
+    num_leds: 3
+    name: "Flaschengeist"
+    variant: 800KBPS
+
+switch:
+  - platform: gpio
+    pin: D6
+    inverted: yes
+    name: "Brightness On/Off"    
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: "config"
+
+web_server:
+  port: 80
